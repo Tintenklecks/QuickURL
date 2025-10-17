@@ -1,0 +1,71 @@
+================================
+QUICKURL - APP STORE LISTING
+================================
+
+-------------------
+PROMOTIONAL TEXT (170 char max)
+-------------------
+Access your favorite websites instantly from your menu bar. One click to any URL you need, organized exactly how you want.
+
+Character count: 141
+
+
+-------------------
+DESCRIPTION (4000 char max)
+-------------------
+QuickURL puts your most-visited websites right where you need them - in your Mac's menu bar. Stop wasting time searching through browser bookmarks, typing URLs from memory, or keeping dozens of browser tabs open. With QuickURL, every website you visit regularly is just one click away.
+
+HOW IT WORKS
+
+QuickURL adds a small icon to your menu bar. Click it, and you'll see all your saved URLs in a clean, organized menu. Click any URL to open it instantly in your default browser. It's that simple.
+
+PERFECT FOR EVERYONE
+
+Developers can keep quick access to GitHub repositories, documentation sites, localhost servers, and development tools. Content creators stay connected to analytics dashboards, social media platforms, and content management systems. Students and researchers organize academic resources, online libraries, and research databases. Business professionals maintain links to project management tools, communication platforms, and company portals.
+
+POWERFUL FEATURES
+
+The app includes a full-featured manager where you can add new URLs with custom titles, edit existing entries, and remove ones you no longer need. Drag and drop URLs to reorder them exactly how you want. Add visual dividers to group related URLs together, creating clear sections in your menu for different projects, categories, or workflows.
+
+NATIVE AND EFFICIENT
+
+Built entirely with SwiftUI, QuickURL is a truly native macOS application that follows Apple's design guidelines. It runs efficiently in the background, using minimal system resources while remaining instantly responsive. The app feels right at home on your Mac, with smooth animations and a familiar interface.
+
+ALWAYS READY
+
+Your URLs are automatically saved and persist across app launches and system restarts. QuickURL loads quickly at startup and is ready whenever you need it. There's no setup required beyond adding your first URLs.
+
+PRIVACY FIRST
+
+QuickURL stores all your data locally on your Mac using standard system storage. Nothing is sent to external servers. No accounts, no tracking, no data collection. Your URLs stay on your machine, completely private.
+
+SIMPLE TO USE
+
+Adding a URL takes seconds. Open the manager, type a title and URL, click Add. Want to organize them? Just drag URLs up or down in the list. Need to update a link? Click the edit button, make your changes, and save. Everything is intuitive and straightforward.
+
+LIGHTWEIGHT DESIGN
+
+QuickURL doesn't try to be everything to everyone. It does one thing exceptionally well - gives you fast access to your URLs. The app stays out of your way until you need it, living quietly in your menu bar without cluttering your workspace.
+
+USE CASES
+
+Keep localhost development servers at your fingertips. Maintain quick access to multiple GitHub repositories. Jump between different environments like staging and production. Access internal company tools and dashboards. Open frequently referenced documentation instantly. Monitor multiple analytics platforms. Switch between client project portals. Launch video conferencing rooms quickly. Access online tools and web apps you use daily.
+
+GET STARTED
+
+Install QuickURL and it appears in your menu bar immediately. Click the icon and select Manage URLs to add your first entries. Start with the websites you visit most often. Add dividers to separate work links from personal ones, or to group URLs by project. Rearrange them until they're in your preferred order. Then just click the menu bar icon whenever you need a quick link.
+
+SYSTEM REQUIREMENTS
+
+QuickURL requires macOS 13.0 or later and runs natively on both Intel and Apple Silicon Macs.
+
+Character count: 3492
+
+
+-------------------
+KEYWORDS (100 char max)
+-------------------
+url,bookmark,menu bar,launcher,quick access,productivity,browser,links,shortcut,web,menubar,tools
+
+Character count: 99
+
