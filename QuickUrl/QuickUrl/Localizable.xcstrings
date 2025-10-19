@@ -1,0 +1,222 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Add a divider to organize your URLs" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Füge einen Trenner ein, um Deine URLs besser zu organisieren"
+          }
+        }
+      }
+    },
+    "Add a new URL (⌘N)" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neue URL hinzufügen (⌘N)"
+          }
+        }
+      }
+    },
+    "Add Divider" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trenner hinzufügen"
+          }
+        }
+      }
+    },
+    "Add New URL" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neue URL hinzufügen"
+          }
+        }
+      }
+    },
+    "Add URL" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL hinzufügen"
+          }
+        }
+      }
+    },
+    "Add Your First URL" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Füge die erste URL ein"
+          }
+        }
+      }
+    },
+    "Add your first URL to get started" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Füge die erste URL ein"
+          }
+        }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abbrechen"
+          }
+        }
+      }
+    },
+    "Delete Divider" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trenner löschen"
+          }
+        }
+      }
+    },
+    "Delete URL" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL löschen"
+          }
+        }
+      }
+    },
+    "e.g., GitHub" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "z.B. Github"
+          }
+        }
+      }
+    },
+    "e.g., https://github.com" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "z.B. https://github.com"
+          }
+        }
+      }
+    },
+    "Edit URL" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL bearbeiten"
+          }
+        }
+      }
+    },
+    "No URLs Yet" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch keine URLs vorhanden"
+          }
+        }
+      }
+    },
+    "Open URL" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL öffnen"
+          }
+        }
+      }
+    },
+    "Please enter a valid URL starting with http:// or https://" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bitte gib eine gültige URL (mit https:// ) ein"
+          }
+        }
+      }
+    },
+    "Tip: Drag URLs to reorder, hover to delete" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tipp: Ziehe URLs und Trenner um sie umzuordnen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tip: Drag URLs and Dividers to reorder"
+          }
+        }
+      }
+    },
+    "Title:" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Titel:"
+          }
+        }
+      }
+    },
+    "Update URL" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL aktualisieren"
+          }
+        }
+      }
+    },
+    "URL Details" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL Info"
+          }
+        }
+      }
+    },
+    "URL:" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "URL:"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.1"
+}

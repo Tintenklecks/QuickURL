@@ -104,12 +104,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let contentView = URLManagerView(viewModel: viewModel)
             
             let window = NSWindow(
-                contentRect: NSRect(x: 0, y: 0, width: 600, height: 500),
-                styleMask: [.titled, .closable, .resizable],
+                contentRect: NSRect(x: 0, y: 0, width: 400, height: 500),
+                styleMask: [.titled, .closable, .resizable, .fullSizeContentView],
                 backing: .buffered,
                 defer: false
             )
             window.title = "Quick URL Manager"
+            window.titlebarAppearsTransparent = false
+            window.toolbarStyle = .unified
             window.center()
             window.contentView = NSHostingView(rootView: contentView)
             window.setFrameAutosaveName("URLManagerWindow")
