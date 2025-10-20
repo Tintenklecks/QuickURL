@@ -51,7 +51,20 @@ struct URLManagerView: View {
             }
         }
         .sheet(isPresented: $showingAddSheet) {
-            addEditSheet
+            AddEditURLSheet(
+                title: $newTitle,
+                url: $newURL,
+                editingItem: $editingItem,
+                isPresented: $showingAddSheet,
+                focusedField: $focusedField,
+                onSave: { title, url, item in
+                    if let editing = item {
+                        viewModel.updateURL(item: editing, title: title, url: url)
+                    } else {
+                        viewModel.addURL(title: title, url: url)
+                    }
+                }
+            )
         }
         .onChange(of: editingItem) { _, newValue in
             if newValue != nil {
@@ -181,121 +194,7 @@ struct URLManagerView: View {
         return sectionNumber
     }
     
-    // MARK: - Add/Edit Sheet
-    
-    private var addEditSheet: some View {
-        VStack(spacing: 0) {
-            // Header
-            HStack {
-                Text(editingItem == nil ? "Add New URL" : "Edit URL")
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                Spacer()
-                Button(action: {
-                    showingAddSheet = false
-                    cancelEditing()
-                }) {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(.secondary)
-                        .font(.title2)
-                }
-                .buttonStyle(.plain)
-            }
-            .padding()
-            
-            Divider()
-            
-            // Form
-            Form {
-                Section {
-                    LabeledContent("Title:") {
-                        TextField("e.g., GitHub", text: $newTitle)
-                            .textFieldStyle(.roundedBorder)
-                            .focused($focusedField, equals: .title)
-                    }
-                    
-                    LabeledContent("URL:") {
-                        TextField("e.g., https://github.com", text: $newURL)
-                            .textFieldStyle(.roundedBorder)
-                            .focused($focusedField, equals: .url)
-                    }
-                } header: {
-                    Text("URL Details")
-                        .font(.headline)
-                        .foregroundStyle(.primary)
-                } footer: {
-                    if !newURL.isEmpty && !isValidURL(newURL) {
-                        Label("Please enter a valid URL starting with http:// or https://", systemImage: "exclamationmark.triangle")
-                            .font(.caption)
-                            .foregroundStyle(.orange)
-                    }
-                }
-                .padding(.vertical, 8)
-            }
-            .formStyle(.grouped)
-            .scrollDisabled(true)
-            
-            // Buttons
-            HStack(spacing: 12) {
-                Button("Cancel") {
-                    showingAddSheet = false
-                    cancelEditing()
-                }
-                .keyboardShortcut(.cancelAction)
-                
-                Spacer()
-                
-                Button(editingItem == nil ? "Add URL" : "Update URL") {
-                    saveURL()
-                }
-                .keyboardShortcut(.defaultAction)
-                .buttonStyle(.borderedProminent)
-                .disabled(!canSave)
-            }
-            .padding()
-            .background(.ultraThinMaterial)
-        }
-        .frame(width: 500, height: 300)
-        .onAppear {
-            focusedField = .title
-        }
-    }
-    
-    // MARK: - Helper Properties
-    
-    private var canSave: Bool {
-        !newTitle.trimmingCharacters(in: .whitespaces).isEmpty &&
-        !newURL.trimmingCharacters(in: .whitespaces).isEmpty &&
-        isValidURL(newURL)
-    }
-    
     // MARK: - Helper Methods
-    
-    private func isValidURL(_ string: String) -> Bool {
-        guard let url = URL(string: string) else { return false }
-        return url.scheme == "http" || url.scheme == "https"
-    }
-    
-    private func saveURL() {
-        let trimmedTitle = newTitle.trimmingCharacters(in: .whitespaces)
-        let trimmedURL = newURL.trimmingCharacters(in: .whitespaces)
-        
-        if let editing = editingItem {
-            viewModel.updateURL(item: editing, title: trimmedTitle, url: trimmedURL)
-        } else {
-            viewModel.addURL(title: trimmedTitle, url: trimmedURL)
-        }
-        
-        showingAddSheet = false
-        cancelEditing()
-    }
-    
-    private func cancelEditing() {
-        editingItem = nil
-        newTitle = ""
-        newURL = ""
-        focusedField = nil
-    }
     
     private func openURL(_ urlString: String) {
         guard let url = URL(string: urlString) else { return }
@@ -308,171 +207,8 @@ struct URLManagerView: View {
     }
 }
 
-// MARK: - Divider Row
-
-struct DividerRow: View {
-    let item: URLItem
-    let isHovered: Bool
-    let onDelete: () -> Void
-    
-    var body: some View {
-        HStack(spacing: 12) {
-            Rectangle()
-                .fill(Color.accentColor)
-                .frame(height: 1)
-            
-            // Delete button (shown on hover) - always reserve space
-            ZStack {
-                // Invisible placeholder to maintain consistent height
-                Image(systemName: "trash.circle.fill")
-                    .font(.system(size: 20))
-                    .opacity(0)
-                
-                // Actual button (shown on hover)
-                if isHovered {
-                    Button(action: onDelete) {
-                        Image(systemName: "trash.circle.fill")
-                            .font(.system(size: 20))
-                    }
-                    .buttonStyle(.plain)
-                    .foregroundStyle(Color.accentColor)
-                    .help("Delete Divider")
-                    .transition(.opacity.combined(with: .scale(scale: 0.9)))
-                }
-            }
-        }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 20)
-        .listRowInsets(EdgeInsets())
-        .listRowBackground(Color.clear)
-        .animation(.easeInOut(duration: 0.2), value: isHovered)
-    }
-}
-
-// MARK: - URL Item Row
-
-/// Row view for a single URL item
-struct URLItemRow: View {
-    let item: URLItem
-    let isHovered: Bool
-    let colorGroup: Int
-    let onEdit: () -> Void
-    let onOpen: () -> Void
-    let onDelete: () -> Void
-    
-    @State private var isPressed = false
-    
-    var body: some View {
-        HStack(spacing: 12) {
-            // Icon
-            ZStack {
-                RoundedRectangle(cornerRadius: 8)
-                    .fill(iconGradient)
-                    .frame(width: 40, height: 40)
-                
-                Image(systemName: "link")
-                    .font(.system(size: 18, weight: .medium))
-                    .foregroundStyle(.white)
-            }
-            
-            // Content
-            VStack(alignment: .leading, spacing: 4) {
-                Text(item.title)
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(.primary)
-                
-                Text(item.url)
-                    .font(.system(size: 12))
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
-            }
-            
-            Spacer(minLength: 12)
-            
-            // Action buttons (shown on hover)
-            if isHovered {
-                HStack(spacing: 8) {
-                    Button(action: onOpen) {
-                        Image(systemName: "arrow.up.forward.square")
-                            .font(.system(size: 18))
-                    }
-                    .buttonStyle(.plain)
-                    .foregroundStyle(Color.accentColor)
-                    .help("Open URL")
-                    
-                    Button(action: onEdit) {
-                        Image(systemName: "pencil.circle.fill")
-                            .font(.system(size: 20))
-                    }
-                    .buttonStyle(.plain)
-                    .foregroundStyle(Color.accentColor)
-                    .help("Edit URL")
-                    
-                    Button(action: onDelete) {
-                        Image(systemName: "trash.circle.fill")
-                            .font(.system(size: 20))
-                    }
-                    .buttonStyle(.plain)
-                    .foregroundStyle(Color.accentColor)
-                    .help("Delete URL")
-                }
-                .transition(.opacity.combined(with: .scale(scale: 0.9)))
-            }
-        }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 12)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(rowBackground)
-        )
-        .contentShape(Rectangle())
-        .scaleEffect(isPressed ? 0.98 : 1.0)
-        .animation(.easeInOut(duration: 0.15), value: isPressed)
-        .animation(.easeInOut(duration: 0.2), value: isHovered)
-        .onTapGesture {
-            isPressed = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                isPressed = false
-                onOpen()
-            }
-        }
-    }
-    
-    private var iconGradient: LinearGradient {
-        let colors = iconColors(for: colorGroup)
-        return LinearGradient(
-            colors: colors,
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-    }
-    
-    private var rowBackground: Color {
-        if isPressed {
-            return Color.accentColor.opacity(0.1)
-        } else if isHovered {
-            return Color(nsColor: .controlBackgroundColor)
-        } else {
-            return Color.clear
-        }
-    }
-    
-    private func iconColors(for group: Int) -> [Color] {
-        let colorPairs: [[Color]] = [
-            [.orange, .red],
-            [.blue, .cyan],
-            [.purple, .pink],
-            [.green, .mint],
-            [.indigo, .purple]
-        ]
-        return colorPairs[group % colorPairs.count]
-    }
-}
-
 // MARK: - Preview
 
 #Preview {
     URLManagerView(viewModel: URLManagerViewModel())
 }
-
