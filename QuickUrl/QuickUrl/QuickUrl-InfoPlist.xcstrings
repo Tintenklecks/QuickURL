@@ -5,6 +5,12 @@
       "comment" : "Bundle name",
       "extractionState" : "extracted_with_value",
       "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quick URL"
+          }
+        },
         "en" : {
           "stringUnit" : {
             "state" : "new",
@@ -19,13 +25,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ingo Böhme, 2025 ++"
+            "value" : "Ingo Böhme, 2026 ++"
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "2025++ Ingo Boehme"
+            "value" : "2026++ Ingo Boehme"
           }
         }
       }

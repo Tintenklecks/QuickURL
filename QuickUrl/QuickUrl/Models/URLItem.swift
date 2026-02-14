@@ -13,19 +13,24 @@ struct URLItem: Identifiable, Codable, Equatable {
     var title: String
     var url: String
     var isDivider: Bool
-    
-    init(id: UUID = UUID(), title: String, url: String, isDivider: Bool = false) {
+    var bookmarkData: Data?
+
+    init(
+        id: UUID = UUID(), title: String, url: String, isDivider: Bool = false,
+        bookmarkData: Data? = nil
+    ) {
         self.id = id
         self.title = title
         self.url = url
         self.isDivider = isDivider
+        self.bookmarkData = bookmarkData
     }
-    
+
     /// Creates a divider item
     static func divider() -> URLItem {
         URLItem(title: "", url: "", isDivider: true)
     }
-    
+
     /// Validates if the URL is valid
     var isValid: Bool {
         if isDivider { return true }
@@ -33,4 +38,3 @@ struct URLItem: Identifiable, Codable, Equatable {
         return URL(string: url) != nil
     }
 }
-

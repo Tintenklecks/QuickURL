@@ -63,7 +63,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     keyEquivalent: ""
                 )
                 menuItem.target = self
-                menuItem.representedObject = item.url
+                menuItem.representedObject = ["url": item.url, "id": item.id.uuidString]
                 menu.addItem(menuItem)
             }
         }
@@ -104,15 +104,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func openURL(_ sender: NSMenuItem) {
-        guard let urlString = sender.representedObject as? String,
+        guard let info = sender.representedObject as? [String: String],
+            let urlString = info["url"],
             let url = URL(string: urlString)
         else {
             return
         }
 
         if url.isFileURL {
-            // Reveal file in Finder — uses IPC to Finder, no sandbox file access needed
-            NSWorkspace.shared.activateFileViewerSelecting([url])
+            let itemId = info["id"].flatMap { UUID(uuidString: $0) }
+            let existingBookmark = itemId.flatMap { id in
+                viewModel.urlItems.first(where: { $0.id == id })?.bookmarkData
+            }
+            let newBookmark = FileOpenService.openFileURL(url, existingBookmark: existingBookmark)
+            if let itemId, newBookmark != existingBookmark {
+                viewModel.updateBookmark(for: itemId, bookmarkData: newBookmark)
+            }
         } else {
             NSWorkspace.shared.open(url)
         }
@@ -128,6 +135,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 backing: .buffered,
                 defer: false
             )
+            window.isReleasedWhenClosed = false
             window.title = "Quick URL Manager"
             window.titlebarAppearsTransparent = false
             window.toolbarStyle = .unified
@@ -155,9 +163,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 extension AppDelegate: NSWindowDelegate {
     func windowWillClose(_ notification: Notification) {
         if notification.object as? NSWindow === managerWindow {
-            managerWindow = nil
-            // Update menu when manager window closes
-            updateMenu()
+            // Keep the window alive — just reload menu data.
+            // Destroying the window causes a Combine/SwiftUI teardown race crash.
+            viewModel.loadURLs()
         }
     }
 }

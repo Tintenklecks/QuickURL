@@ -15,6 +15,7 @@ struct URLManagerView: View {
     @State private var editingItem: URLItem?
     @State private var showingAddSheet = false
     @State private var hoveredItemId: UUID?
+    @State private var isEditMode = false
     @FocusState private var focusedField: Field?
 
     enum Field: Hashable {
@@ -54,6 +55,17 @@ struct URLManagerView: View {
                     .scaleEffect(0.7)
                 }
                 .help("Add a divider to organize your URLs")
+
+                Button(action: {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        isEditMode.toggle()
+                    }
+                }) {
+                    Label(
+                        "Reorder",
+                        systemImage: isEditMode ? "checkmark.circle.fill" : "arrow.up.arrow.down")
+                }
+                .help(isEditMode ? "Done reordering" : "Reorder URLs via drag & drop")
             }
         }
         .sheet(isPresented: $showingAddSheet) {
@@ -76,6 +88,9 @@ struct URLManagerView: View {
             if newValue != nil {
                 showingAddSheet = true
             }
+        }
+        .onExitCommand {
+            NSApp.keyWindow?.close()
         }
     }
 
@@ -122,33 +137,49 @@ struct URLManagerView: View {
             ForEach(viewModel.urlItems) { item in
                 let index = viewModel.urlItems.firstIndex(where: { $0.id == item.id }) ?? 0
                 if item.isDivider {
-                    DividerRow(
-                        item: item,
-                        isHovered: hoveredItemId == item.id,
-                        onDelete: { deleteItem(item) }
-                    )
+                    HStack(spacing: 8) {
+                        if isEditMode {
+                            Image(systemName: "line.3.horizontal")
+                                .foregroundStyle(.secondary)
+                                .font(.system(size: 14))
+                        }
+                        DividerRow(
+                            item: item,
+                            isHovered: hoveredItemId == item.id,
+                            onDelete: { deleteItem(item) }
+                        )
+                    }
                     .id(item.id)
                     .listRowSeparator(.hidden)
                     .onHover { hovering in
                         hoveredItemId = hovering ? item.id : nil
                     }
                 } else {
-                    URLItemRow(
-                        item: item,
-                        isHovered: hoveredItemId == item.id,
-                        colorGroup: sectionColorGroup(for: index),
-                        onEdit: {
-                            editingItem = item
-                            newTitle = item.title
-                            newURL = item.url
-                        },
-                        onOpen: {
-                            openURL(item.url)
-                        },
-                        onDelete: {
-                            deleteItem(item)
+                    HStack(spacing: 8) {
+                        if isEditMode {
+                            Image(systemName: "line.3.horizontal")
+                                .foregroundStyle(.secondary)
+                                .font(.system(size: 14))
                         }
-                    )
+                        URLItemRow(
+                            item: item,
+                            isHovered: isEditMode ? false : hoveredItemId == item.id,
+                            colorGroup: sectionColorGroup(for: index),
+                            onEdit: {
+                                editingItem = item
+                                newTitle = item.title
+                                newURL = item.url
+                            },
+                            onOpen: {
+                                if !isEditMode {
+                                    openURL(item)
+                                }
+                            },
+                            onDelete: {
+                                deleteItem(item)
+                            }
+                        )
+                    }
                     .listRowBackground(rowBackgroundColor(for: index))
                     .listRowSeparator(.hidden)
                     .onHover { hovering in
@@ -164,9 +195,13 @@ struct URLManagerView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "info.circle")
                             .foregroundStyle(.secondary)
-                        Text("Tip: Drag URLs to reorder, hover to delete")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                        Text(
+                            isEditMode
+                                ? "Drag the ☰ handles to reorder items"
+                                : "Tip: Hover to edit or delete items"
+                        )
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                     }
                     .padding(.vertical, 8)
                 }
@@ -204,9 +239,16 @@ struct URLManagerView: View {
 
     // MARK: - Helper Methods
 
-    private func openURL(_ urlString: String) {
-        guard let url = URL(string: urlString) else { return }
-        NSWorkspace.shared.open(url)
+    private func openURL(_ item: URLItem) {
+        guard let url = URL(string: item.url) else { return }
+        if url.isFileURL {
+            let newBookmark = FileOpenService.openFileURL(url, existingBookmark: item.bookmarkData)
+            if newBookmark != item.bookmarkData {
+                viewModel.updateBookmark(for: item.id, bookmarkData: newBookmark)
+            }
+        } else {
+            NSWorkspace.shared.open(url)
+        }
     }
 
     private func deleteItem(_ item: URLItem) {
