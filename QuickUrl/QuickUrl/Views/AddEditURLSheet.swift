@@ -127,7 +127,7 @@ struct AddEditURLSheet: View {
     
     private func isValidURL(_ string: String) -> Bool {
         guard let url = URL(string: string) else { return false }
-        return url.scheme == "http" || url.scheme == "https"
+        return url.scheme == "http" || url.scheme == "https" || url.scheme == "file"
     }
     
     private func save() {

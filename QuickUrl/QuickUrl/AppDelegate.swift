@@ -13,20 +13,21 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem!
     private var managerWindow: NSWindow?
     private let viewModel = URLManagerViewModel()
-    
+
     func applicationDidFinishLaunching(_ notification: Notification) {
         // Create status bar item
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        
+
         if let button = statusItem.button {
-            button.image = NSImage(systemSymbolName: "link.circle.fill", accessibilityDescription: "Quick URLs")
+            button.image = NSImage(
+                systemSymbolName: "link.circle.fill", accessibilityDescription: "Quick URLs")
             button.action = #selector(statusBarButtonClicked)
             button.target = self
         }
-        
+
         // Initial menu update
         updateMenu()
-        
+
         // Observe changes to update menu
         NotificationCenter.default.addObserver(
             self,
@@ -35,22 +36,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             object: nil
         )
     }
-    
+
     @objc private func statusBarButtonClicked() {
         updateMenu()
         statusItem.menu = createMenu()
         statusItem.button?.performClick(nil)
         statusItem.menu = nil
     }
-    
+
     @objc private func updateMenu() {
         // Reload URLs from storage to ensure menu is up-to-date
         viewModel.loadURLs()
     }
-    
+
     private func createMenu() -> NSMenu {
         let menu = NSMenu()
-        
+
         // Add URL items
         for item in viewModel.urlItems {
             if item.isDivider {
@@ -66,10 +67,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                 menu.addItem(menuItem)
             }
         }
-        
+
         // Add separator before management options
         menu.addItem(NSMenuItem.separator())
-        
+
         // Add "Manage URLs..." option
         let manageItem = NSMenuItem(
             title: "Manage URLs...",
@@ -78,7 +79,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         )
         manageItem.target = self
         menu.addItem(manageItem)
-        
+
+        // Add version info (disabled)
+        let version =
+            Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
+        let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "0"
+        let versionItem = NSMenuItem(
+            title: "Version \(version).\(build)", action: nil, keyEquivalent: "")
+        versionItem.isEnabled = false
+        menu.addItem(versionItem)
+
+        menu.addItem(NSMenuItem.separator())
+
         // Add "Quit" option
         let quitItem = NSMenuItem(
             title: "Quit",
@@ -87,22 +99,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         )
         quitItem.target = self
         menu.addItem(quitItem)
-        
+
         return menu
     }
-    
+
     @objc private func openURL(_ sender: NSMenuItem) {
         guard let urlString = sender.representedObject as? String,
-              let url = URL(string: urlString) else {
+            let url = URL(string: urlString)
+        else {
             return
         }
         NSWorkspace.shared.open(url)
     }
-    
+
     @objc private func openManager() {
         if managerWindow == nil {
             let contentView = URLManagerView(viewModel: viewModel)
-            
+
             let window = NSWindow(
                 contentRect: NSRect(x: 0, y: 0, width: 400, height: 500),
                 styleMask: [.titled, .closable, .resizable, .fullSizeContentView],
@@ -115,17 +128,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             window.center()
             window.contentView = NSHostingView(rootView: contentView)
             window.setFrameAutosaveName("URLManagerWindow")
-            
+
             // Post notification when window closes to update menu
             window.delegate = self
-            
+
             managerWindow = window
         }
-        
+
         managerWindow?.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
     }
-    
+
     @objc private func quit() {
         NSApplication.shared.terminate(nil)
     }
@@ -142,4 +155,3 @@ extension AppDelegate: NSWindowDelegate {
         }
     }
 }
-
