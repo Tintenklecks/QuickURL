@@ -15,12 +15,12 @@ struct URLItemRow: View {
     let onEdit: () -> Void
     let onOpen: () -> Void
     let onDelete: () -> Void
-    
+
     @State private var isPressed = false
     @State private var isOpenButtonHovered = false
     @State private var isEditButtonHovered = false
     @State private var isDeleteButtonHovered = false
-    
+
     var body: some View {
         HStack(spacing: 12) {
             // Icon
@@ -28,27 +28,27 @@ struct URLItemRow: View {
                 RoundedRectangle(cornerRadius: 8)
                     .fill(iconGradient)
                     .frame(width: 40, height: 40)
-                
+
                 Image(systemName: "link")
                     .font(.system(size: 18, weight: .medium))
                     .foregroundStyle(.white)
             }
-            
+
             // Content
             VStack(alignment: .leading, spacing: 4) {
                 Text(item.title)
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(.primary)
-                
+
                 Text(item.url)
                     .font(.system(size: 12))
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
                     .truncationMode(.middle)
             }
-            
+
             Spacer(minLength: 12)
-            
+
             // Action buttons (shown on hover)
             if isHovered {
                 HStack(spacing: 8) {
@@ -63,7 +63,7 @@ struct URLItemRow: View {
                     .onHover { hovering in
                         isOpenButtonHovered = hovering
                     }
-                    
+
                     Button(action: onEdit) {
                         Image(systemName: "pencil.circle.fill")
                             .font(.system(size: 20))
@@ -75,7 +75,7 @@ struct URLItemRow: View {
                     .onHover { hovering in
                         isEditButtonHovered = hovering
                     }
-                    
+
                     Button(action: onDelete) {
                         Image(systemName: "trash.circle.fill")
                             .font(.system(size: 20))
@@ -101,15 +101,17 @@ struct URLItemRow: View {
         .scaleEffect(isPressed ? 0.98 : 1.0)
         .animation(.easeInOut(duration: 0.15), value: isPressed)
         .animation(.easeInOut(duration: 0.2), value: isHovered)
-        .onTapGesture {
-            isPressed = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                isPressed = false
-                onOpen()
+        .simultaneousGesture(
+            TapGesture().onEnded {
+                isPressed = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    isPressed = false
+                    onOpen()
+                }
             }
-        }
+        )
     }
-    
+
     private var iconGradient: LinearGradient {
         let colors = iconColors(for: colorGroup)
         return LinearGradient(
@@ -118,12 +120,12 @@ struct URLItemRow: View {
             endPoint: .bottomTrailing
         )
     }
-    
+
     private var sectionColor: Color {
         let colors = iconColors(for: colorGroup)
         return colors[0]
     }
-    
+
     private var rowBackground: Color {
         if isPressed {
             return Color.accentColor.opacity(0.1)
@@ -133,16 +135,15 @@ struct URLItemRow: View {
             return Color.clear
         }
     }
-    
+
     private func iconColors(for group: Int) -> [Color] {
         let colorPairs: [[Color]] = [
             [.orange, .red],
             [.blue, .cyan],
             [.purple, .pink],
             [.green, .mint],
-            [.indigo, .purple]
+            [.indigo, .purple],
         ]
         return colorPairs[group % colorPairs.count]
     }
 }
-

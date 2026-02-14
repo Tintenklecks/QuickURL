@@ -16,11 +16,11 @@ struct URLManagerView: View {
     @State private var showingAddSheet = false
     @State private var hoveredItemId: UUID?
     @FocusState private var focusedField: Field?
-    
+
     enum Field: Hashable {
         case title, url
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             // Main content
@@ -41,11 +41,17 @@ struct URLManagerView: View {
                 }
                 .keyboardShortcut("n", modifiers: .command)
                 .help("Add a new URL (⌘N)")
-                
+
                 Button(action: {
                     viewModel.addDivider()
                 }) {
-                    Label("Add Divider", systemImage: "minus")
+                    Label(
+                        "Add Divider",
+                        systemImage:
+                            "arrowtriangle.left.and.line.vertical.and.arrowtriangle.right.fill"
+                    )
+                    .rotationEffect(.degrees(90))
+                    .scaleEffect(0.7)
                 }
                 .help("Add a divider to organize your URLs")
             }
@@ -72,27 +78,27 @@ struct URLManagerView: View {
             }
         }
     }
-    
+
     // MARK: - Empty State
-    
+
     private var emptyStateView: some View {
         VStack(spacing: 24) {
             Spacer()
-            
+
             Image(systemName: "link.circle")
                 .font(.system(size: 64))
                 .foregroundStyle(.tertiary)
-            
+
             VStack(spacing: 8) {
                 Text("No URLs Yet")
                     .font(.title2)
                     .fontWeight(.semibold)
-                
+
                 Text("Add your first URL to get started")
                     .font(.body)
                     .foregroundStyle(.secondary)
             }
-            
+
             Button(action: {
                 showingAddSheet = true
                 focusedField = .title
@@ -102,18 +108,19 @@ struct URLManagerView: View {
             }
             .buttonStyle(.borderedProminent)
             .controlSize(.large)
-            
+
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(nsColor: .textBackgroundColor))
     }
-    
+
     // MARK: - URL List
-    
+
     private var urlListView: some View {
         List {
-            ForEach(Array(viewModel.urlItems.enumerated()), id: \.element.id) { index, item in
+            ForEach(viewModel.urlItems) { item in
+                let index = viewModel.urlItems.firstIndex(where: { $0.id == item.id }) ?? 0
                 if item.isDivider {
                     DividerRow(
                         item: item,
@@ -150,7 +157,7 @@ struct URLManagerView: View {
                 }
             }
             .onMove(perform: viewModel.moveURLs)
-            
+
             // Hint section
             if !viewModel.urlItems.isEmpty {
                 Section {
@@ -169,7 +176,7 @@ struct URLManagerView: View {
         .listStyle(.inset)
         .scrollContentBackground(.visible)
     }
-    
+
     private func rowBackgroundColor(for index: Int) -> Color {
         // Count only non-divider items before this index
         var urlRowCount = 0
@@ -178,11 +185,12 @@ struct URLManagerView: View {
                 urlRowCount += 1
             }
         }
-        
+
         // Alternate backgrounds: clear for even, colored for odd
-        return urlRowCount % 2 == 0 ? Color.clear : Color(nsColor: .unemphasizedSelectedContentBackgroundColor).opacity(0.3)
+        return urlRowCount % 2 == 0
+            ? Color.clear : Color(nsColor: .unemphasizedSelectedContentBackgroundColor).opacity(0.3)
     }
-    
+
     private func sectionColorGroup(for index: Int) -> Int {
         // Count dividers before this index to determine the section number
         var sectionNumber = 0
@@ -193,14 +201,14 @@ struct URLManagerView: View {
         }
         return sectionNumber
     }
-    
+
     // MARK: - Helper Methods
-    
+
     private func openURL(_ urlString: String) {
         guard let url = URL(string: urlString) else { return }
         NSWorkspace.shared.open(url)
     }
-    
+
     private func deleteItem(_ item: URLItem) {
         guard let index = viewModel.urlItems.firstIndex(where: { $0.id == item.id }) else { return }
         viewModel.deleteURLs(at: IndexSet(integer: index))

@@ -109,7 +109,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         else {
             return
         }
-        NSWorkspace.shared.open(url)
+
+        if url.isFileURL {
+            // Reveal file in Finder — uses IPC to Finder, no sandbox file access needed
+            NSWorkspace.shared.activateFileViewerSelecting([url])
+        } else {
+            NSWorkspace.shared.open(url)
+        }
     }
 
     @objc private func openManager() {
